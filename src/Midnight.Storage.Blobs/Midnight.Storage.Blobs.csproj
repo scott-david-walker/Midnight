@@ -3,7 +3,7 @@
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
         <LangVersion>latest</LangVersion>
-        <Version>0.0.1-alpha.5</Version>
+        <Version>0.0.1</Version>
         <PackageId>Midnight.Storage.Blobs</PackageId>
         <Title>Midnight.Storage.Blobs</Title>
         <Authors>Scott Walker</Authors>
@@ -19,7 +19,6 @@
     <ItemGroup>
       <PackageReference Include="Azure.Storage.Blobs" Version="12.13.1" />
       <PackageReference Include="Microsoft.Extensions.Azure" Version="1.5.0" />
-      <PackageReference Include="System.Text.Json" Version="6.0.6" />
     </ItemGroup>
 
     <ItemGroup>
@@ -29,5 +28,6 @@
     </ItemGroup>
     <ItemGroup>
         <InternalsVisibleTo Include="Midnight.Storage.Blobs.UnitTests" />
+        <InternalsVisibleTo Include="DynamicProxyGenAssembly2"/>
     </ItemGroup>
 </Project>

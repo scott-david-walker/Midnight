@@ -1,6 +1,11 @@
-﻿using System;
+﻿#region
+
+using System;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.DependencyInjection;
+using Midnight.Storage.Blobs.Internal;
+
+#endregion
 
 namespace Midnight.Storage.Blobs.Extensions;
 
@@ -19,6 +24,12 @@ public static class BuilderExtensions
         });
 
         services.AddScoped<IMidnightBlobStorage, MidnightBlobStorage>();
+        services.AddScoped<IMidnightContainerService, MidnightContainerService>();
+        services.AddScoped<IMidnightContainerRetriever, MidnightContainerRetriever>();
+        services.AddScoped<IMidnightBlobUploader, MidnightBlobUploader>();
+        services.AddScoped<IMidnightBlobRetriever, MidnightBlobRetriever>();
+
+
         return services;
     }
 }
