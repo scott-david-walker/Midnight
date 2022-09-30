@@ -1,0 +1,35 @@
+name: main-ci
+
+on:
+  push:
+    branches: [ "main" ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+
+    name: publish-main
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1.9.0
+
+      - name: Install dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test
+
+      - name: Pack
+        run: dotnet pack src/Midnight.Storage.Blobs/Midnight.Storage.Blobs.csproj  --no-build --configuration Release
+
+      - name: PushNuget
+        run: dotnet nuget push **/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.MIDNIGHT_NUGET_API_KEY }} --skip-duplicate
