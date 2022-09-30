@@ -3,11 +3,11 @@
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
         <LangVersion>latest</LangVersion>
-        <Version>0.0.1-alpha.2</Version>
+        <Version>0.0.1-alpha.3</Version>
         <PackageId>Midnight.Storage.Blobs</PackageId>
         <Title>Midnight.Storage.Blobs</Title>
         <Authors>Scott Walker</Authors>
-
+        <PackageReadmeFile>README.MD</PackageReadmeFile>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageProjectUrl>https://github.com/scott-david-walker/Midnight/tree/main/src/Midnight.Storage.Blobs</PackageProjectUrl>
