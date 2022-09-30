@@ -8,7 +8,10 @@ public static class BuilderExtensions
 {
     public static IServiceCollection AddMidnightBlobs(this IServiceCollection services, string storageConnectionString, Action<MidnightBlobsBuilder> options = null)
     {
-        services.Configure(options);
+        if (options != null)
+        {
+            services.Configure(options);    
+        }
         services.AddAzureClients(builder =>
         {
             builder.AddBlobServiceClient(storageConnectionString)
