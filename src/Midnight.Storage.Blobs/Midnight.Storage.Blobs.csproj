@@ -7,7 +7,7 @@
         <PackageId>Midnight.Storage.Blobs</PackageId>
         <Title>Midnight.Storage.Blobs</Title>
         <Authors>Scott Walker</Authors>
-        <PackageReadmeFile>README.MD</PackageReadmeFile>
+        <PackageReadmeFile>Readme.MD</PackageReadmeFile>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageProjectUrl>https://github.com/scott-david-walker/Midnight/tree/main/src/Midnight.Storage.Blobs</PackageProjectUrl>
@@ -22,6 +22,9 @@
       <PackageReference Include="System.Text.Json" Version="6.0.6" />
     </ItemGroup>
 
+    <ItemGroup>
+        <None Include="Readme.md" Pack="true" PackagePath="\"/>
+    </ItemGroup>
     <ItemGroup>
         <InternalsVisibleTo Include="Midnight.Storage.Blobs.UnitTests" />
     </ItemGroup>
