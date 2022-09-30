@@ -1,86 +1,66 @@
-﻿using System;
+﻿#region
+
+using System;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
-using Microsoft.Extensions.Azure;
-using Microsoft.Extensions.Options;
-using Midnight.Storage.Blobs.Extensions;
+using Midnight.Storage.Blobs.Internal;
+
+#endregion
 
 namespace Midnight.Storage.Blobs;
 
-internal class MidnightBlobStorage : IMidnightBlobStorage
+internal class MidnightBlobStorage : IMidnightBlobStorage, IMidnightContainerService, IMidnightBlobRetriever,
+    IMidnightBlobUploader
 {
-    private readonly BlobServiceClient _blobServiceClient;
-    private readonly MidnightBlobsBuilder _options;
-    private string _containerName;
-    public MidnightBlobStorage(IAzureClientFactory<BlobServiceClient> factory,
-        IOptions<MidnightBlobsBuilder> options)
+    private readonly IMidnightContainerService _containerService;
+    private readonly IMidnightBlobRetriever _midnightBlobRetriever;
+    private readonly IMidnightBlobUploader _midnightBlobUploader;
+    private string _container;
+
+    public MidnightBlobStorage(IMidnightContainerService containerService,
+        IMidnightBlobRetriever midnightBlobRetriever,
+        IMidnightBlobUploader midnightBlobUploader)
     {
-        _options = options.Value;
-        _blobServiceClient = factory.CreateClient(AzureClientNaming.MidnightBlobName);
+        _containerService = containerService;
+        _midnightBlobRetriever = midnightBlobRetriever;
+        _midnightBlobUploader = midnightBlobUploader;
     }
 
+    /// <summary>
+    ///     A method that will return a BlobServiceClient giving direct access to the Azure Api
+    /// </summary>
+    /// <returns>Blob Service Client</returns>
     public BlobServiceClient GetServiceClient()
     {
-        return _blobServiceClient;
+        return _containerService.GetServiceClient();
     }
 
-    public IMidnightBlobStorage UseContainer(string containerName)
+    /// <summary>
+    ///     Sets the container for any subsequent calls
+    /// </summary>
+    /// <param name="containerName"></param>
+    public void UseContainer(string containerName)
     {
-        _containerName = containerName;
-        return this;
+        _container = containerName;
     }
-
+    
     public async Task<BinaryData> Get(string blobLocation)
     {
-        return await Get(blobLocation, _containerName);
+        return await _midnightBlobRetriever.Get(blobLocation, _container);
     }
     
     public async Task<BinaryData> Get(string blobLocation, string containerName)
     {
-        var container = await GetContainer(containerName);
-        return await Get(blobLocation, container);
+        return await _midnightBlobRetriever.Get(blobLocation, containerName);
     }
     
     public async Task Save(BinaryData content, string blobLocation)
     {
-        await Save(content, blobLocation, _containerName);
+        await _midnightBlobUploader.Save(content, blobLocation, _container);
     }
     
     public async Task Save(BinaryData content, string blobLocation, string containerName)
     {
-        var container = await GetContainer(containerName);
-        var blob = container.GetBlobClient(blobLocation);
-        await blob.UploadAsync(content, _options.ShouldOverwriteExistingBlob);
-    }
-
-    private static async Task<BinaryData> Get(string blobLocation, BlobContainerClient client)
-    {
-        var blob = client.GetBlobClient(blobLocation);
-        var download = await blob.DownloadContentAsync();
-        var content = download.Value.Content;
-        return content;
-    }
-
-    private async Task<BlobContainerClient> GetContainer(string containerName)
-    {
-        await CreateContainerIfNecessary(containerName);
-        return _blobServiceClient.GetBlobContainerClient(containerName);
-    }
-    
-    private async Task CreateContainerIfNecessary(string containerName)
-    {
-        ThrowIfContainerNameIsNull(containerName);
-        if (_options.ShouldCreateContainerIfNotExisting)
-        {
-            var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
-            await containerClient.CreateIfNotExistsAsync();
-        }
-    }
-    private static void ThrowIfContainerNameIsNull(string containerName)
-    {
-        if (containerName == null)
-        {
-            throw new NullReferenceException("No container name specified");
-        }
+        await _midnightBlobUploader.Save(content, blobLocation, containerName);
     }
 }
